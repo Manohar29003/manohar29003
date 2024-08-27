@@ -1,31 +1,50 @@
-import { useState } from 'react';
-import { hello_backend } from 'declarations/hello_backend';
+import React, { useState } from 'react';
 
-function App() {
-  const [greeting, setGreeting] = useState('');
+const App = () => {
+  const [task, setTask] = useState('');
+  const [priority, setPriority] = useState('');
+  const [tasks, setTasks] = useState([]);
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    const name = event.target.elements.name.value;
-    hello_backend.greet(name).then((greeting) => {
-      setGreeting(greeting);
-    });
-    return false;
-  }
+  const handleAddTask = () => {
+    if (task && priority) {
+      setTasks([...tasks, { task, priority }]);
+      setTask('');
+      setPriority('');
+    }
+  };
+
+  const sortedTasks = tasks.sort((a, b) => a.priority - b.priority);
 
   return (
-    <main>
-      <img src="/logo2.svg" alt="DFINITY logo" />
-      <br />
-      <br />
-      <form action="#" onSubmit={handleSubmit}>
-        <label htmlFor="name">Enter your name: &nbsp;</label>
-        <input id="name" alt="Name" type="text" />
-        <button type="submit">Click Me!</button>
-      </form>
-      <section id="greeting">{greeting}</section>
-    </main>
+    <div className="App">
+      <h1>Task Prioritization Tool</h1>
+      <div className="input-section">
+        <input
+          type="text"
+          value={task}
+          onChange={(e) => setTask(e.target.value)}
+          placeholder="Enter task"
+        />
+        <input
+          type="number"
+          value={priority}
+          onChange={(e) => setPriority(e.target.value)}
+          placeholder="Enter priority (1-5)"
+        />
+        <button onClick={handleAddTask}>Add Task</button>
+      </div>
+      <div className="task-list">
+        <h2>Task List</h2>
+        <ul>
+          {sortedTasks.map((item, index) => (
+            <li key={index}>
+              <span>{item.task}</span> - <span>Priority: {item.priority}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   );
-}
+};
 
 export default App;
